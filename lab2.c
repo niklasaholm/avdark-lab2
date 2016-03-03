@@ -1,3 +1,13 @@
+/*
+1. Run the critical section tests with the pthreads critical sections 
+implementation (./lab2 -t critical -c pthreads). 
+Does the counter return to its initial value? Why?/Why not?
+
+Nej. Den skriver till minnet lite hur som helst, beroende på hur långt den kommit i sina itterationer.
+
+OM den ena processorn hämtar ett värde samtidigt som den andra, och uppdaterar värdet så kommer det att bli fel.
+*/
+
 /**
  * Experimenting with synchronization and memory consistency.
  * 
