@@ -24,12 +24,13 @@ increase(int thread, int iterations, volatile int *data)
                  * exit_critical(thread) to define a critical section
                  * around the code that needs to execute atomically.
                  */
+		enter_critical(thread);
                 a = *data;
-                a++;
+		a++;
                 *data = a;
-        }
+		exit_critical(thread);
+	}
 }
-
 /**
  * Code for thread 1, decrements the shared variable 'data',
  * through a local variable
@@ -43,10 +44,12 @@ decrease(int thread, int iterations, volatile int *data)
                  * exit_critical(thread) to define a critical section
                  * around the code that needs to execute atomically.
                  */
+                enter_critical(thread);
                 a = *data;
-                a--;
-                *data = a;
-        }
+		a--;
+		*data = a;
+		exit_critical(thread);	
+	}        
 }
 
 test_impl_t test_impl_critical = {

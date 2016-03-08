@@ -60,41 +60,48 @@ static int num_threads;
  * Acquire a lock using the CLH locking algorithm. See the lecture
  * notes for details.
  */
-static void
+
+	static void
 lh_acquire(int ** volatile l, int ** volatile i, volatile int ** volatile p)
 {
-        assert (**i == 0);
-        assert (*i == *p);
-        /* BONUS TASK: Implement the acquire part of the CLH locking
-         * algorithm as described in the lecture notes. */
+	assert (**i == 0);
+	assert (*i == *p);
+	/* BONUS TASK: Implement the acquire part of the CLH locking
+	 * algorithm as described in the lecture notes. */
+	**i = 1;
+	*p =  asm_atomic_xchg_voidp((void**)l, (void*)*p);
+	while (**p !=0) {};
+
 }
 
 /**
  * Release a lock using the CLH locking algorithm. See the lecture
  * notes for details.
  */
-static void
+	static void
 lh_release(int **i, int **p)
 {
-        assert (**i != 0);
-        assert (*i != *p);
-        /* BONUS TASK: Implement the release part of the CLH locking
-         * algorithm as described in the lecture notes. */
+	assert (**i != 0);
+	assert (*i != *p);
+	/* BONUS TASK: Implement the release part of the CLH locking
+	 * algorithm as described in the lecture notes. */
+	**i = 0;
+	*i = *p;
 }
 
-static void
+	static void
 impl_init(int _num_threads)
 {
-        num_threads = _num_threads;
+	num_threads = _num_threads;
 
-        lh_threads = malloc(sizeof(*lh_threads) * num_threads);
-        lock_cells = malloc(sizeof(*lock_cells) * num_threads);
+	lh_threads = malloc(sizeof(*lh_threads) * num_threads);
+	lock_cells = malloc(sizeof(*lock_cells) * num_threads);
 
-        assert(lh_threads && lock_cells);
+	assert(lh_threads && lock_cells);
 
-        lock_l = &lock_cell0;
-        for (int i = 0; i < num_threads; i++) {
-                lh_threads[i].i = &lock_cells[i].v;
+	lock_l = &lock_cell0;
+	for (int i = 0; i < num_threads; i++) {
+		lh_threads[i].i = &lock_cells[i].v;
                 lh_threads[i].p = lh_threads[i].i;
         }
 }
